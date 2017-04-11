@@ -1,0 +1,124 @@
+$green: #40a42b;
+$greenDeep: #308d1c;
+$purple: #7d55cb;
+$purpleDeep: #653fb0;
+$red: #e36837;
+$redDeep: #d04c19;
+$grey: #eaeaea;
+$greyDeep: #888;
+$indexProgressHei: 138px;
+$arrowHei: 34px;
+
+.index-list {
+  list-style: none;
+  color: #fff;
+  .index-list-body {
+    font-size: 32px;
+    padding: 30px 0 20px;
+  }
+  .index-list-footer {
+    font-size: 14px;
+    line-height: 2;
+  }
+  li {
+    &:first-child {
+      .index-list-body {
+        background-color: $green;
+      }
+      .index-list-footer {
+        background-color: $greenDeep;
+      }
+    }
+    &:nth-child(2) {
+      .index-list-body {
+        background-color: $purple;
+      }
+      .index-list-footer {
+        background-color: $purpleDeep;
+      }
+    }
+    &:nth-child(3) {
+      .index-list-body {
+        background-color: $red;
+      }
+      .index-list-footer {
+        background-color: $redDeep;
+      }
+    }
+  }
+}
+.index-list-zweit {
+  list-style: none;
+  text-align: center;
+  li {
+    border-right: 1px solid $grey;
+    &:last-child {
+      border: none;
+    }
+  }
+  i {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    height: 50px;
+  }
+  h3 {
+    font-size: inherit;
+  }
+}
+.index-progress {
+  list-style: none;
+  text-align: center;
+  &:after {
+    display: inline-block;
+    content: ' ';
+    clear: both;
+  }
+  h3 {
+    color: #434343;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 20px;
+    margin-bottom: 15px;
+  }
+  h4 {
+    color: $greyDeep;
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+  li {
+    &.list-hr {
+      position: relative;
+      min-height: 1px;
+      float: left;
+      color: #fff;
+      font-size: $arrowHei;
+      margin-top: - $arrowHei / 2;
+      width: 100%;
+      i {
+        text-shadow: -2px 1px 6px #888;
+      }
+    }
+  }
+  @media (min-width: 768px) {
+    li {
+      height: $indexProgressHei;
+      &.list-item {
+        width: 30%;
+      }
+      &.list-hr {
+        width: 5%;
+        line-height: $indexProgressHei;
+      }
+    }
+  }
+
+}
+.index-txt-green {
+  color: $greenDeep;
+}
+.index-txt-purple {
+  color: $purpleDeep;
+}
+.index-txt-red {
+  color: $redDeep;
+}
