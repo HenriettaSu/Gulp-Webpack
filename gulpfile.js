@@ -1,16 +1,16 @@
 /*
  * Gulp-Webpack
- * Version: 0.1.0
+ * Version: 0.1.1
  *
  * 自動化構建工具
  * 現在就連測試都沒有試過咯，安裝都沒有安裝過咯
- * 誰叫我現在連上傳到github上都要開自己熱點，好肉赤咯
+ * 連上傳到github上都要開自己熱點，好肉赤咯
  *
  * https://github.com/HenriettaSu/Gulp-Webpack
  *
  * License: MIT
  *
- * Released on: April 11, 2017
+ * Released on: April 12, 2017
  */
 
 'use strict';
@@ -41,8 +41,8 @@ import webpack from 'webpack';
 import webpackConfig from './webpack.config';
 import gutil from 'gulp-util';
 
-// 環境變量，exprot NODE_ENV = build更改當前終端下環境變量，默認為開發環境
-const NODE_ENV = (process.env.NODE_ENV === 'production') ? 'production' : 'build',
+// 環境變量，exprot NODE_ENV = production更改當前終端下環境變量，默認為開發環境
+const NODE_ENV = (process.env.NODE_ENV === 'production') ? 'production' : 'develop',
     bs = browserSync.create(),
     devCompiler = webpack(webpackConfig),
     // file path
@@ -125,11 +125,15 @@ gulp.task('sass-to-css', ['stylelint'], () => gulp
         browsers: ['> 1%', 'last 2 versions', 'ie 6-11'],
         cascade: false
     }))
+    // 文件合併，webpack壓縮
+    // .pipe(gulp.dest(BUILD_CSS_PATH))
+    // .pipe(concat('style.min.css'))
     .pipe(sourceMaps.write('../../dist/css/maps'))
     .pipe(gulp.dest(BUILD_CSS_PATH))
 );
 
 // minify css
+// TODO: 可能會廢棄
 gulp.task('minify-css', () => gulp
     .src([/* 'other file's path', */ buildCss])
     .pipe(changed(buildCss))
@@ -152,6 +156,7 @@ gulp.task('eslint', () => gulp
 );
 
 // minify js
+// TODO: 可能會廢棄
 gulp.task('jscompress', ['eslint'], cb => {
     pump([
             gulp.src(buildJs),
@@ -164,7 +169,7 @@ gulp.task('jscompress', ['eslint'], cb => {
 });
 
 // webpack
-gulp.task('webpack', cb => {
+gulp.task('webpack', ['eslint'], cb => {
     devCompiler.run((err, stats) => {
         if (err) {
             throw new gutil.PluginError('webpack', err)
@@ -225,7 +230,7 @@ gulp.task('browser-sync', () => {
          * server為靜態服務器
          * 某些場合下需要測試功能時，開啟tunnel和online即可
          * 開啟後會非常卡，建議測試結束後關掉
-        */
+         */
     });
     // gulp.watch('./dist/**/*.*').on('change', bs.reload);
 });
