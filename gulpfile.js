@@ -1,6 +1,6 @@
 /*
  * Gulp-Webpack
- * Version: 0.1.1
+ * Version: 0.2.0
  *
  * 自動化構建工具
  * 現在就連測試都沒有試過咯，安裝都沒有安裝過咯
@@ -10,41 +10,41 @@
  *
  * License: MIT
  *
- * Released on: April 12, 2017
+ * Released on: April 17, 2017
  */
 
 'use strict';
-import gulp from 'gulp';
-import gulpif from 'gulp-if';
-import changed from 'gulp-changed';
-import rename from 'rename';
-import sass from 'gulp-sass';
-import autoPrefixer from 'gulp-autoprefixer'; // css3前綴
-import spritesmith from 'gulp.spritesmith'; // css sprite
-import cleanCSS from 'gulp-clean-css'; // css壓縮
-import mocha from 'gulp-mocha'; // js單元測試
-import pump from 'pump'; // 錯誤定位
-import uglify from 'gulp-uglify'; // js壓縮
-import eslint from 'gulp-eslint'; // js審查
-import imagemin from 'gulp-imagemin'; // img壓縮
-import pngquant from 'imagemin-pngquant'; // png壓縮
-import sourceMaps from 'gulp-sourcemaps'; // sourcemaps
-import concat from 'gulp-concat'; // 文件合併
-import browserSync from 'browser-sync';
-// import {create as bs} from 'browser-sync';
-import stripDebug from 'gulp-strip-debug'; // 清除console, alert, debugger
-import postcss from 'gulp-postcss';
-import syntax_scss from 'postcss-scss'; // postcss識別sass
-import stylelint from 'stylelint'; //css審查
-import reporter from 'postcss-reporter';
-import webpack from 'webpack';
-import webpackConfig from './webpack.config';
-import gutil from 'gulp-util';
+const gulp = require('gulp'),
+    gulpif = require('gulp-if'),
+    changed = require('gulp-changed'),
+    rename = require('gulp-rename'),
+    sass = require('gulp-sass'),
+    autoPrefixer = require('gulp-autoprefixer'), // css3前綴
+    spritesmith = require('gulp.spritesmith'), // css sprite
+    cleanCSS = require('gulp-clean-css'), // css壓縮
+    pump = require('pump'), // 錯誤定位
+    uglify = require('gulp-uglify'), // js壓縮
+    eslint = require('gulp-eslint'), // js審查
+    imagemin = require('gulp-imagemin'), // img壓縮
+    pngquant = require('imagemin-pngquant'), // png壓縮
+    sourceMaps = require('gulp-sourcemaps'), // sourcemaps
+    concat = require('gulp-concat'), // 文件合併
+    assetRev = require('gulp-asset-rev'),
+    bs = require('browser-sync').create(),
+    stripDebug = require('pump'), // 清除console, alert, debugger
+    postcss = require('gulp-postcss'),
+    syntax_scss = require('postcss-scss'), // postcss識別sass
+    stylelint = require('stylelint'), //css審查
+    reporter = require('postcss-reporter'),
+    webpack = require('webpack'),
+    webpackConfig = require('./webpack.config'),
+    gutil = require('gulp-util'),
 
-// 環境變量，exprot NODE_ENV = production更改當前終端下環境變量，默認為開發環境
-const NODE_ENV = (process.env.NODE_ENV === 'production') ? 'production' : 'develop',
-    bs = browserSync.create(),
     devCompiler = webpack(webpackConfig),
+
+    // 環境變量，export NODE_ENV = production更改當前終端下環境變量，默認為開發環境
+    NODE_ENV = (process.env.NODE_ENV === 'production') ? 'production' : 'develop',
+
     // file path
     buildImg = 'build/images/*',
     BUILD_IMG_PATH = 'build/images/',
@@ -58,7 +58,8 @@ const NODE_ENV = (process.env.NODE_ENV === 'production') ? 'production' : 'devel
     buildModule = 'build/module/*/*/*.js',
     DIST_IMG_PATH = 'dist/images',
     DIST_CSS_PATH = 'dist/css',
-    DIST_JS_PATH = 'dist/js';
+    DIST_JS_PATH = 'dist/js',
+    html = '*.html';
 
 // create css sprite
 gulp.task('css-sprite', () => gulp
@@ -111,7 +112,7 @@ gulp.task('stylelint', cb => {
 });
 
 // sass to css
-gulp.task('sass-to-css', ['stylelint'], () => gulp
+gulp.task('sass-to-css', /*['stylelint'],*/ () => gulp
     .src(buildSass)
     .pipe(changed(buildSass))
     .pipe(sourceMaps.init())
@@ -133,15 +134,14 @@ gulp.task('sass-to-css', ['stylelint'], () => gulp
 );
 
 // minify css
-// TODO: 可能會廢棄
 gulp.task('minify-css', () => gulp
-    .src([/* 'other file's path', */ buildCss])
+    .src(buildCss)
     .pipe(changed(buildCss))
-    // .pipe(assetRev())
     .pipe(concat('style.css'))
     .pipe(gulp.dest(DIST_CSS_PATH))
     .pipe(cleanCSS({compatibility: 'ie8'}))
     .pipe(rename({suffix: '.min'}))
+    // .pipe(assetRev())
     .pipe(gulp.dest(DIST_CSS_PATH))
 );
 
@@ -156,16 +156,23 @@ gulp.task('eslint', () => gulp
 );
 
 // minify js
-// TODO: 可能會廢棄
 gulp.task('jscompress', ['eslint'], cb => {
     pump([
             gulp.src(buildJs),
             //stripDebug(),
             uglify(),
+            rename({suffix: '.min'}),
+                // .pipe(assetRev())
             gulp.dest(DIST_JS_PATH)
         ],
         cb
     );
+});
+
+// html added rev
+gulp.task('rev', cb => {
+    gulp.src(html)
+        .pipe(assetRev({hashLen:8}));
 });
 
 // webpack
@@ -205,9 +212,20 @@ gulp.task('watch-css', done => {
         .on('end', done);
 });
 
+// watch css with webpack
+gulp.task('watch-css', done => {
+    gulp.watch(buildCss, ['webpack'])
+        .on('end', done);
+});
+
 // watch js
 gulp.task('watch-js', done => {
-    // gulp.watch(buildJs, ['jscompress'])
+    gulp.watch(buildJs, ['jscompress'])
+        .on('end', done);
+});
+
+// watch js with webpack
+gulp.task('watch-js-wp', done => {
     gulp.watch(buildJs, ['webpack'])
         .on('end', done);
     gulp.watch(buildModule, ['webpack'])
@@ -216,6 +234,9 @@ gulp.task('watch-js', done => {
 
 // 開發版
 gulp.task('watch', ['watch-icon', 'watch-img', 'watch-sass', 'watch-css', 'watch-js']);
+
+// webpack版
+gulp.task('watch-wp', ['watch-icon', 'watch-img', 'watch-sass', 'watch-css-wp', 'watch-js-wp']);
 
 // browser-sync
 gulp.task('browser-sync', () => {
@@ -237,3 +258,4 @@ gulp.task('browser-sync', () => {
 
 // gulp
 gulp.task('default', ['watch', 'browser-sync']);
+gulp.task('wp', ['watch-wp', 'browser-sync']); // webpack打包版

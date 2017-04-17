@@ -1,14 +1,19 @@
-# Gulp-Webpack ver 0.1.1
+# Gulp-Webpack ver 0.2.0
 
 自動化構建工具。
 
 #### 下面我都是亂寫的（
 
-現在就連測試都沒有試過咯，安裝都沒有安裝過咯。
-
-連上傳到github上都要開自己熱點，好肉赤咯。
+剛剛開始聯網安裝，測試中。
 
 ## 最近更新
+
+ver 0.1.2
+
+1. 測試通過 `sass-to-css`， `minify-css`， `eslint`， `jscompress`；
+2. 增加eslint校驗規則；
+3. 增加了 `gulp wp` 命令做webpack版，默認 `gulp` 命令不使用webpack編譯；
+4. 修復了一些脫字誤字引起的bug；
 
 ver 0.1.1
 
@@ -18,11 +23,6 @@ ver 0.1.1
 4. `webpack.config.js` 增加了 `module.noParse` 參數，以使webpack不解釋沒有任何依賴的插件；
 5. `webpack.config.js` 增強對js的壓縮；
 6. 發佈環境不使用souremap；
-
-ver 0.1.0
-
-1. 瞎寫了 `gulpfile.js` 和 `webpack.config.js`，沒測試過；
-2. `package.json` 缺斤少両；
 
 ## 功能
 
@@ -66,11 +66,21 @@ ver 0.1.0
 
 ## 使用
 
+首先電腦要安裝node.js，這裡不累述node.js的安裝姿勢了。
+
+### 克隆項目
+
+```
+$ git clone git@github.com:HenriettaSu/Gulp-Webpack.git
+```
+
 ### 安裝
 
 ```
+$ cd Gulp-Webpack
 $ node install --save-dev
 ```
+
 ### 環境變量
 
 本套件會根據環境有不同的配置，**默認為開發環境**，當需要生成發佈版的時候，請將環境變量改為發佈環境。
@@ -78,7 +88,7 @@ $ node install --save-dev
 更改**當前終端**下環境變量：
 
 ```
-$ exprot NODE_ENV = production
+$ export NODE_ENV = production
 ```
 
 ### gulp命令
@@ -163,6 +173,14 @@ $ gulp
 
 進入監聽狀態，自動編譯文件，文件更新時自動刷新頁面。
 
+#### gulp with webpack
+
+```
+$ gulp wp
+```
+
+同上。區別在於這個使用了webpack：提取公共文件，css和js用webpack打包壓縮。
+
 ## 構建說明
 
 考慮到某些情況下，頁面類型不同導致加載文件差異較大，module先以文件夾對頁面進行簡單分類如：列表頁、詳情頁、等，每個頁面又需要一個文件夾對應，加載的文件以 `require()` 的形式寫在 `index.js` 文件內。
@@ -181,21 +199,17 @@ $ gulp
 
 1. Eslint規則；
 
-2. gulp與webpack編譯css和js性能對比；
+2. package.json依賴庫；
 
-3. package.json依賴庫；
+3. 要不要用 `WebpackBrowserPlugin` 替代 `browser-sync`；
 
-4. `WebpackBrowserPlugin` 替代 `browser-sync`；
-
-5. 關於發佈分支：
+4. 關於發佈分支：
 
    A. 除了dist分支，再分一個發佈用的輸出分支，更改環境變量來控制編譯配置；
 
    B. 新建一個task，通過gulp來對開發環境輸出的dist分支裡的文件進行壓縮編譯；
 
-6. 打包文件可能會很大，怎麼解決；
-
-7. webpack編譯可能會很慢；
+5. 單頁面應用；
 
 ## 聯繫與討論
 

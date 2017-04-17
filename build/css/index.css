@@ -1,0 +1,82 @@
+.index-list {
+  list-style: none;
+  color: #fff; }
+  .index-list .index-list-body {
+    font-size: 32px;
+    padding: 30px 0 20px; }
+  .index-list .index-list-footer {
+    font-size: 14px;
+    line-height: 2; }
+  .index-list li:first-child .index-list-body {
+    background-color: #40a42b; }
+  .index-list li:first-child .index-list-footer {
+    background-color: #308d1c; }
+  .index-list li:nth-child(2) .index-list-body {
+    background-color: #7d55cb; }
+  .index-list li:nth-child(2) .index-list-footer {
+    background-color: #653fb0; }
+  .index-list li:nth-child(3) .index-list-body {
+    background-color: #e36837; }
+  .index-list li:nth-child(3) .index-list-footer {
+    background-color: #d04c19; }
+
+.index-list-zweit {
+  list-style: none;
+  text-align: center; }
+  .index-list-zweit li {
+    border-right: 1px solid #eaeaea; }
+    .index-list-zweit li:last-child {
+      border: none; }
+  .index-list-zweit i {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    height: 50px; }
+  .index-list-zweit h3 {
+    font-size: inherit; }
+
+.index-progress {
+  list-style: none;
+  text-align: center; }
+  .index-progress:after {
+    display: inline-block;
+    content: ' ';
+    clear: both; }
+  .index-progress h3 {
+    color: #434343;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 20px;
+    margin-bottom: 15px; }
+  .index-progress h4 {
+    color: #888;
+    font-size: 15px;
+    margin-bottom: 20px; }
+  .index-progress li.list-hr {
+    position: relative;
+    min-height: 1px;
+    float: left;
+    color: #fff;
+    font-size: 34px;
+    margin-top: -17px;
+    width: 100%; }
+    .index-progress li.list-hr i {
+      text-shadow: -2px 1px 6px #888; }
+  @media (min-width: 768px) {
+    .index-progress li {
+      height: 138px; }
+      .index-progress li.list-item {
+        width: 30%; }
+      .index-progress li.list-hr {
+        width: 5%;
+        line-height: 138px; } }
+
+.index-txt-green {
+  color: #308d1c; }
+
+.index-txt-purple {
+  color: #653fb0; }
+
+.index-txt-red {
+  color: #d04c19; }
+
+/*# sourceMappingURL=../../dist/css/maps/index.css.map */
