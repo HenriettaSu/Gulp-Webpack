@@ -6,7 +6,6 @@
   "dependencies": {
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.0",
-    "gulp-clean-css": "^2.0.4",
     "gulp-eslint": "^2.0.0",
     "gulp-if": "^2.0.0",
     "gulp-imagemin": "^2.4.0",
@@ -17,19 +16,20 @@
     "gulp.spritesmith": "^6.2.1",
     "imagemin-pngquant": "^4.2.2",
     "pump": "^1.0.1",
-    "sprity": "^1.0.8",
-    "stylelint": "^6.7.1",
-    "stylelint-config-standard": "^9.0.0"
+    "sprity": "^1.0.8"
   },
   "devDependencies": {
     "browser-sync": "^2.11.2",
+    "css-loader": "^0.28.0",
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^11.1.3",
     "eslint-plugin-import": "^2.2.0",
     "extract-text-webpack-plugin": "^2.1.0",
+    "file-loader": "^0.11.1",
     "glob": "^7.1.1",
     "gulp-asset-rev": "0.0.15",
     "gulp-changed": "^1.3.0",
+    "gulp-clean-css": "^3.0.4",
     "gulp-concat": "^2.6.0",
     "gulp-eslint": "^2.1.0",
     "gulp-postcss": "^6.4.0",
@@ -38,11 +38,15 @@
     "gulp-strip-debug": "^1.1.0",
     "gulp-util": "^3.0.8",
     "gulp.spritesmith": "^6.3.0",
+    "image-webpack-loader": "^3.3.0",
     "path": "^0.12.7",
     "postcss-reporter": "^1.3.3",
-    "postcss-scss": "^0.1.8",
+    "postcss-scss": "^0.4.1",
     "rename": "^1.0.4",
     "spritesmith": "^3.1.0",
+    "style-loader": "^0.16.1",
+    "stylelint": "^7.10.1",
+    "stylelint-config-standard": "^16.0.0",
     "webpack": "^2.3.3"
   },
   "eslintConfig": {

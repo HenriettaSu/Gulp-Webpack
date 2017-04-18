@@ -63,7 +63,7 @@ body.nav-md .nav_title {
       clear: both;
       display: block; }
     .tabs-header ul li {
-      /*float: left;*/
+      /* float: left; */
       display: inline-block;
       list-style: none;
       padding: 6px 12px;
@@ -143,8 +143,8 @@ div.toolbar {
   /*&.active {
     .form-inline {
       height: auto;
-	  overflow-y: visible;
-	}
+      overflow-y: visible;
+    }
   }*/ }
   div.toolbar .form-inline .form-group {
     margin-right: 12px;
@@ -685,7 +685,7 @@ ul.form-control-static li {
     margin-bottom: 0 !important; }
   div.toolbar .form-inline {
     /*height: 32px;
-	  overflow-y: hidden;
+      overflow-y: hidden;
       width: 90%;*/
     display: inline-block; }
   div.toolbar .search-more {

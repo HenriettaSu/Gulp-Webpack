@@ -1,16 +1,15 @@
 /*
  * Gulp-Webpack
- * Version: 0.2.0
+ * Version: 0.2.1
  *
  * 自動化構建工具
- * 現在就連測試都沒有試過咯，安裝都沒有安裝過咯
- * 連上傳到github上都要開自己熱點，好肉赤咯
+ * 剛剛開始聯網安裝，測試中
  *
  * https://github.com/HenriettaSu/Gulp-Webpack
  *
  * License: MIT
  *
- * Released on: April 17, 2017
+ * Released on: April 18, 2017
  */
 
 const webpack = require('webpack'),
@@ -21,7 +20,7 @@ const webpack = require('webpack'),
 	UglifyJsPlugin = webpack.optimize.UglifyJsPlugin,
 	DedupePlugin = webpack.optimize.DedupePlugin;
 
-// 環境變量，export NODE_ENV = production更改當前終端下環境變量，默認為開發環境
+// 環境變量，export NODE_ENV=production更改當前終端下環境變量，默認為開發環境
 const NODE_ENV = (process.env.NODE_ENV === 'production') ? 'production' : 'develop',
 	build = path.resolve(process.cwd(), 'build'),
 	vendor = path.resolve(process.cwd(), 'vendor');
@@ -62,12 +61,35 @@ let webpackConfig = { // 基礎配置
 						}
 					)
 				},
+				// 解釋字體
 				{
-					test: /\.(jpe?g|png|gif)$/i,
-					loaders: [
-						'file?name=../../dist/images/[name].[ext]',
-						'image-webpack?bypassOnDebug&optimizationLevel=7&interlaced=false'
-					]
+					test: /\.(svg|ttf|woff|woff2|eot)$/i,
+					loader: 'file-loader',
+					query: {
+						name: '[name].[ext]',
+						outputPath: '../fonts/',
+						publicPath: ' '
+					}
+				},
+				{
+				    test: /\.(gif|png|jpe?g)$/i,
+				    loaders: [
+						{
+							loader: 'file-loader',
+							query: {
+								name: '[name].[ext]',
+								outputPath: '../images/',
+								publicPath: ' '
+				        	}
+						},
+				        {
+				        	loader: 'image-webpack-loader',
+				        	query: {
+				          		optimizationLevel: 7,
+				          		interlaced: false
+				        	}
+				      	}
+				    ]
 				}
 				// 將對象暴露為全局變量，但是引用的文件會被打包到構建文件裡
 				// {
@@ -81,13 +103,6 @@ let webpackConfig = { // 基礎配置
 				// {
 				// 	test: path.resolve(build + '/js/params.js'),
 				// 	loader: 'exports?params'
-				// },
-				// 解釋字體
-				// {
-				// 	test: /\.(svg|ttf|woff|woff2|eot)$/i,
-				// 	loaders: [
-				// 		'file?name=../../dist/fonts/[name].[ext]'
-				// 	]
 				// }
 			],
 			noParse: /node_modules\/(jquery|moment|chart\.js)/ // 使某些沒有依賴的文件脫離webpack解釋
@@ -98,10 +113,8 @@ let webpackConfig = { // 基礎配置
 				jQuery: 'jquery'
 			}),
 			new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/), // 忽略moment裡對locale的require()
-			new ExtractTextPlugin('../css/[name].css'),
-			new DedupePlugin(), // 避免重複模塊
+			new ExtractTextPlugin('[name].css'),
 			new UglifyJsPlugin({ // css也在這裡壓縮
-				beautify: false,
 				comments: false,
 				compress: {
 					warnings: false,

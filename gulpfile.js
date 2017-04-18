@@ -1,16 +1,15 @@
 /*
  * Gulp-Webpack
- * Version: 0.2.0
+ * Version: 0.2.1
  *
  * 自動化構建工具
- * 現在就連測試都沒有試過咯，安裝都沒有安裝過咯
- * 連上傳到github上都要開自己熱點，好肉赤咯
+ * 剛剛開始聯網安裝，測試中
  *
  * https://github.com/HenriettaSu/Gulp-Webpack
  *
  * License: MIT
  *
- * Released on: April 17, 2017
+ * Released on: April 18, 2017
  */
 
 'use strict';
@@ -42,7 +41,7 @@ const gulp = require('gulp'),
 
     devCompiler = webpack(webpackConfig),
 
-    // 環境變量，export NODE_ENV = production更改當前終端下環境變量，默認為開發環境
+    // 環境變量，export NODE_ENV=production更改當前終端下環境變量，默認為開發環境
     NODE_ENV = (process.env.NODE_ENV === 'production') ? 'production' : 'develop',
 
     // file path
@@ -59,6 +58,8 @@ const gulp = require('gulp'),
     DIST_IMG_PATH = 'dist/images',
     DIST_CSS_PATH = 'dist/css',
     DIST_JS_PATH = 'dist/js',
+    moduleCss = 'dist/module/*.css',
+    MODULE_PATH = 'dist/module/',
     html = '*.html';
 
 // create css sprite
@@ -85,17 +86,6 @@ gulp.task('imagemin', ['css-sprite'], () => gulp
     .pipe(gulp.dest(DIST_IMG_PATH))
 );
 
-// sass lint
-// gulp.task('stylelint', function () {
-//     let processors = [
-//             stylelint(),
-//             reporter({
-//                 clearMessages: true
-//             })
-//         ];
-//     return gulp.src(buildSass)
-//         .pipe(postcss(processors, {syntax: syntax_scss}));
-// });
 gulp.task('stylelint', cb => {
     let processors = [
             stylelint(),
@@ -112,7 +102,7 @@ gulp.task('stylelint', cb => {
 });
 
 // sass to css
-gulp.task('sass-to-css', /*['stylelint'],*/ () => gulp
+gulp.task('sass-to-css', ['stylelint'], () => gulp
     .src(buildSass)
     .pipe(changed(buildSass))
     .pipe(sourceMaps.init())
@@ -126,9 +116,6 @@ gulp.task('sass-to-css', /*['stylelint'],*/ () => gulp
         browsers: ['> 1%', 'last 2 versions', 'ie 6-11'],
         cascade: false
     }))
-    // 文件合併，webpack壓縮
-    // .pipe(gulp.dest(BUILD_CSS_PATH))
-    // .pipe(concat('style.min.css'))
     .pipe(sourceMaps.write('../../dist/css/maps'))
     .pipe(gulp.dest(BUILD_CSS_PATH))
 );
@@ -139,10 +126,18 @@ gulp.task('minify-css', () => gulp
     .pipe(changed(buildCss))
     .pipe(concat('style.css'))
     .pipe(gulp.dest(DIST_CSS_PATH))
-    .pipe(cleanCSS({compatibility: 'ie8'}))
+    .pipe(cleanCSS({level: {1: {specialComments: 0}}, compatibility: 'ie8'}))
     .pipe(rename({suffix: '.min'}))
     // .pipe(assetRev())
     .pipe(gulp.dest(DIST_CSS_PATH))
+);
+
+// minify module css
+gulp.task('minify-module-css', () => gulp
+    .src(moduleCss)
+    .pipe(changed(moduleCss))
+    .pipe(cleanCSS({level: {1: {specialComments: 0}}, compatibility: 'ie8'}))
+    .pipe(gulp.dest(MODULE_PATH))
 );
 
 // js lint
@@ -170,10 +165,11 @@ gulp.task('jscompress', ['eslint'], cb => {
 });
 
 // html added rev
-gulp.task('rev', cb => {
-    gulp.src(html)
-        .pipe(assetRev({hashLen:8}));
-});
+gulp.task('rev', () => gulp
+    .src(html)
+    .pipe(assetRev({hashLen: 8, verConnecter: '?v='}))
+    .pipe(gulp.dest(''))
+);
 
 // webpack
 gulp.task('webpack', ['eslint'], cb => {
@@ -213,7 +209,7 @@ gulp.task('watch-css', done => {
 });
 
 // watch css with webpack
-gulp.task('watch-css', done => {
+gulp.task('watch-css-wp', done => {
     gulp.watch(buildCss, ['webpack'])
         .on('end', done);
 });
@@ -232,11 +228,17 @@ gulp.task('watch-js-wp', done => {
         .on('end', done);
 });
 
+// watch css in module
+gulp.task('watch-module-css', done => {
+    gulp.watch(moduleCss, ['minify-module-css'])
+        .on('end', done);
+});
+
 // 開發版
 gulp.task('watch', ['watch-icon', 'watch-img', 'watch-sass', 'watch-css', 'watch-js']);
 
 // webpack版
-gulp.task('watch-wp', ['watch-icon', 'watch-img', 'watch-sass', 'watch-css-wp', 'watch-js-wp']);
+gulp.task('watch-wp', ['watch-icon', 'watch-img', 'watch-sass', 'watch-css-wp', 'watch-module-css',  'watch-js-wp']);
 
 // browser-sync
 gulp.task('browser-sync', () => {

@@ -1,4 +1,4 @@
-# Gulp-Webpack ver 0.2.0
+# Gulp-Webpack ver 0.2.1
 
 自動化構建工具。
 
@@ -8,21 +8,23 @@
 
 ## 最近更新
 
-ver 0.1.2
+ver 0.2.1
+
+1. 測試通過 `css-sprite`， `imagemin`， `webpack` ，`rev`， `stylelint`；
+2. 增加eslint校驗規則；
+3. 增加.stylelintrc文件（未完成）；
+4. webpack2移除了 `DedupePlugin`，so我把這個刪掉了；
+5. 增加 `gulp minify-module-css` 來壓縮module裡被提取出來的css文件；
+6. 壓縮css時移除special comments；
+7. 刪掉一些測試代碼；
+8. 修復更改環境變量的指令多了空格報錯的bug；
+
+ver 0.2.0
 
 1. 測試通過 `sass-to-css`， `minify-css`， `eslint`， `jscompress`；
 2. 增加eslint校驗規則；
 3. 增加了 `gulp wp` 命令做webpack版，默認 `gulp` 命令不使用webpack編譯；
 4. 修復了一些脫字誤字引起的bug；
-
-ver 0.1.1
-
-1. 增加了注釋；
-2. `gulpfile.js` 瞎寫了不用gulp壓縮css和js的情況；
-3. `webpack.config.js` 增加了 `externals` 參數，以使庫類文件不被編譯到包裡；
-4. `webpack.config.js` 增加了 `module.noParse` 參數，以使webpack不解釋沒有任何依賴的插件；
-5. `webpack.config.js` 增強對js的壓縮；
-6. 發佈環境不使用souremap；
 
 ## 功能
 
@@ -55,6 +57,9 @@ ver 0.1.1
 │       └── ...
 │   └── sass                   # sass文件目錄
 ├── dist                       # 輸出目錄
+│   └── css					   # 不使用webpack的css輸出目錄
+│   └── js					   # 不使用webpack的js輸出目錄
+│   └── module				   # 使用webpack生成的js和css文件
 │   └── ...
 ├── vendor                     # 插件和庫
 │   └── ...
@@ -88,7 +93,7 @@ $ node install --save-dev
 更改**當前終端**下環境變量：
 
 ```
-$ export NODE_ENV = production
+$ export NODE_ENV=production
 ```
 
 ### gulp命令
@@ -129,7 +134,15 @@ $ gulp sass-to-css
 $ gulp minify-css
 ```
 
-**可能會廢棄這個功能**。sass編譯出css文件後進行合併，最後在webpack中與其他插件樣式打包壓縮。
+壓縮的文件將會輸出到 `dist/css` 目錄下。
+
+#### module中的css文件壓縮
+
+```
+$ gulp minify-module-css
+```
+
+使用webpack生成的css文件（在 `dist/module` 目錄下）沒有經過壓縮，需要執行這個命令來進行壓縮。
 
 #### js校驗
 
@@ -155,7 +168,7 @@ $ gulp jscompress
 $ gulp webpack
 ```
 
-目前webpack的作用是提取公共文件、壓縮css和js。
+目前webpack的作用是提取公共文件，壓縮js。
 
 #### 啟動browser-sync
 
@@ -197,19 +210,15 @@ $ gulp wp
 
 ## TODO
 
-1. Eslint規則；
+1. 要不要用 `WebpackBrowserPlugin` 替代 `browser-sync`；
 
-2. package.json依賴庫；
-
-3. 要不要用 `WebpackBrowserPlugin` 替代 `browser-sync`；
-
-4. 關於發佈分支：
+2. 關於發佈分支：
 
    A. 除了dist分支，再分一個發佈用的輸出分支，更改環境變量來控制編譯配置；
 
    B. 新建一個task，通過gulp來對開發環境輸出的dist分支裡的文件進行壓縮編譯；
 
-5. 單頁面應用；
+3. 單頁面應用；
 
 ## 聯繫與討論
 

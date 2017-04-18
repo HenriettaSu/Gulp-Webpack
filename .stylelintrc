@@ -1,0 +1,14 @@
+{
+  "rules": {
+    "block-no-empty": null,
+    "color-named": "never",
+    "color-no-invalid-hex": true,
+    "comment-empty-line-before": "never",
+    "declaration-colon-space-after": "always",
+    "indentation": [2, {
+      "except": ["value"]
+    }],
+    "max-empty-lines": 2,
+    "unit-whitelist": ["em", "rem", "%", "s", "px"]
+  }
+}
