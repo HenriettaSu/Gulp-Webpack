@@ -39,7 +39,7 @@
   text-align: center; }
   .index-progress:after {
     display: inline-block;
-    content: ' ';
+    content: " ";
     clear: both; }
   .index-progress h3 {
     color: #434343;

@@ -182,12 +182,12 @@ body.nav-sm {
   }
 }
 div.toolbar {
-  /*&.active {
+  /* &.active {
     .form-inline {
       height: auto;
       overflow-y: visible;
     }
-  }*/
+  } */
   .form-inline {
     .form-group {
       margin-right: 12px;
@@ -318,8 +318,7 @@ div.toolbar {
         position: absolute;
         top: 50%;
         left: 50%;
-        -webkit-transform: translate(-50%,-50%);
-        transform: translate(-50%,-50%);
+        transform: translate(-50%, -50%);
         background-color: #d9d9d9;
       }
       &:before {
@@ -331,7 +330,7 @@ div.toolbar {
         height: 3px;
       }
     }
-    textarea[name="editor"] {
+    textarea[name = "editor"] {
       position: absolute;
       visibility: hidden;
       top: 0;
@@ -383,7 +382,7 @@ div.toolbar {
       }
     }
   }
-  input[type="text"], input[type="password"] {
+  input[type = "text"], input[type = "password"] {
     min-width: 200px;
     &.input-mitte {
       min-width: 280px;
@@ -425,7 +424,7 @@ div.toolbar {
       margin-left: 10px;
     }
     .label {
-      padding: .2em .4em;
+      padding: 0.2em 0.4em;
       font-size: 100%;
       margin-right: 10px;
     }
@@ -454,7 +453,6 @@ div.toolbar {
         }
       }
       &:last-child:before {
-        left: 49%;
         left: auto;
         width: 0;
       }
@@ -503,16 +501,16 @@ div.toolbar {
   overflow-y: scroll;
   max-height: 300px;
 }
-.select-box input[type=radio] {
+.select-box input[type = "radio"] {
   position: absolute;
-  clip: rect(0,0,0,0);
+  clip: rect(0, 0, 0, 0);
 }
 .border-transparent {
   border: 3px solid transparent;
   padding: 10px 0;
 }
 form.form-validator {
-  input[type="checkbox"] {
+  input[type = "checkbox"] {
     & + .form-control-feedback {
       line-height: 20px;
       height: 20px;
@@ -616,9 +614,9 @@ i.icon-eval {
   height: 100%;
   top: 0;
   left: 0;
-  background: rgba(0,0,0,.6);
+  background: rgba(0, 0, 0, 0.6);
   opacity: 0;
-  transition-duration: .3s;
+  transition-duration: 0.3s;
   visibility: hidden;
 }
 .image-modal-visible {
@@ -649,7 +647,7 @@ i.icon-eval {
   min-width: 1px !important;
 }
 .del-pic {
-  background: rgba(76,76,76,0.6) none repeat scroll 0 0;
+  background: rgba(76, 76, 76, 0.6) none repeat scroll 0 0;
   color: #fff;
   display: block;
   height: 28px;
@@ -666,8 +664,8 @@ i.icon-eval {
   max-height: 150px;
   max-width: 300px;
 }
-.table>thead:first-child>tr:first-child>td,
-.table>thead:first-child>tr:first-child>th {
+.table > thead:first-child > tr:first-child > td,
+.table > thead:first-child > tr:first-child > th {
   white-space: nowrap !important;
 }
 .table {
@@ -839,9 +837,9 @@ ul.form-control-static {
   }
   div.toolbar {
     .form-inline {
-      /*height: 32px;
+      /* height: 32px;
       overflow-y: hidden;
-      width: 90%;*/
+      width: 90%; */
       display: inline-block;
     }
     .search-more {

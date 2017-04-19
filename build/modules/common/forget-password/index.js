@@ -7,7 +7,4 @@ require("../../../css/index.css");
 
 //require js
 require("../../../../vendor/bootstrap/js/bootstrap.min.js");
-require("../../../../vendor/require/require.js");
-require("../../../js/app.js");
 require("../../../js/util.js");
-require("../../../js/ensure.js");

@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link href="dist/module/common?v=a0c59779.css" rel="stylesheet">
-    <link href="dist/module/index?v=c664542e.css" rel="stylesheet">
+    <link href="dist/module/common.css?v=61d441c1" rel="stylesheet">
+    <link href="dist/module/index.css?v=5df1fb73" rel="stylesheet">
   </head>
   </head>
   <body>
     <i class="fa fa-chevron-right"></i>
+    <button type="button" id="btn">klick mich!</button>
+
+    <!-- <script src="vendor/jquery-1.12.4/jquery.min.js"></script> -->
+    <script src="dist/module/common.js"></script>
+    <script src="dist/module/index.js"></script>
     <script>
+        // jquery被打包到common.js裡，外部不能使用
+        // $('#btn').on('click', util.alertMsg);
+        document.getElementById('btn').addEventListener('click', util.alertMsg);
     </script>
   </body>
 </html>

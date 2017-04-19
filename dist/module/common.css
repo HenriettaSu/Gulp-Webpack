@@ -2238,8 +2238,8 @@ table.table-middle td, table.table-middle th {
 hr.hr-gradient {
   border: 0;
   height: 1px;
-  background-image: -webkit-linear-gradient(left, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0));
-  background-image: -o-linear-gradient(left, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0)); }
+  background-image: -webkit-linear-gradient(right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0));
+  background-image: linear-gradient(to left, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0)); }
 
 .border-grey {
   border: 1px solid #E6E9ED; }
@@ -2395,12 +2395,12 @@ body.nav-sm .tabs-header, body.nav-sm .tab-footer {
   cursor: default; }
 
 div.toolbar {
-  /*&.active {
+  /* &.active {
     .form-inline {
       height: auto;
       overflow-y: visible;
     }
-  }*/ }
+  } */ }
   div.toolbar .form-inline .form-group {
     margin-right: 12px;
     margin-bottom: 6px; }
@@ -2594,7 +2594,7 @@ div.toolbar {
   margin-left: 10px; }
 
 .media-per .media-body .label {
-  padding: .2em .4em;
+  padding: 0.2em 0.4em;
   font-size: 100%;
   margin-right: 10px; }
 
@@ -2616,7 +2616,6 @@ div.toolbar {
       .wizard ul.wizard-list li:first-child:before {
         left: 49%; }
     .wizard ul.wizard-list li:last-child:before {
-      left: 49%;
       left: auto;
       width: 0; }
     .wizard ul.wizard-list li:before {
@@ -2656,7 +2655,7 @@ div.toolbar {
   overflow-y: scroll;
   max-height: 300px; }
 
-.select-box input[type=radio] {
+.select-box input[type="radio"] {
   position: absolute;
   clip: rect(0, 0, 0, 0); }
 
@@ -2756,8 +2755,8 @@ i.icon-eval {
   left: 0;
   background: rgba(0, 0, 0, 0.6);
   opacity: 0;
-  -webkit-transition-duration: .3s;
-  transition-duration: .3s;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
   visibility: hidden; }
 
 .image-modal-visible {
@@ -2939,9 +2938,9 @@ ul.form-control-static li {
   .form-inline .form-control {
     margin-bottom: 0 !important; }
   div.toolbar .form-inline {
-    /*height: 32px;
+    /* height: 32px;
       overflow-y: hidden;
-      width: 90%;*/
+      width: 90%; */
     display: inline-block; }
   div.toolbar .search-more {
     display: block; } }
@@ -3002,7 +3001,7 @@ ul.form-control-static li {
   text-align: center; }
   .index-progress:after {
     display: inline-block;
-    content: ' ';
+    content: " ";
     clear: both; }
   .index-progress h3 {
     color: #434343;

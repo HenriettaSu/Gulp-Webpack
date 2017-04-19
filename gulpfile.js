@@ -1,15 +1,15 @@
 /*
  * Gulp-Webpack
- * Version: 0.2.1
+ * Version: 0.2.2
+ * Author: HenriettaSu
  *
  * 自動化構建工具
- * 剛剛開始聯網安裝，測試中
  *
  * https://github.com/HenriettaSu/Gulp-Webpack
  *
  * License: MIT
  *
- * Released on: April 18, 2017
+ * Released on: April 19, 2017
  */
 
 'use strict';
@@ -30,7 +30,7 @@ const gulp = require('gulp'),
     concat = require('gulp-concat'), // 文件合併
     assetRev = require('gulp-asset-rev'),
     bs = require('browser-sync').create(),
-    stripDebug = require('pump'), // 清除console, alert, debugger
+    stripDebug = require('gulp-strip-debug'), // 清除console, alert, debugger
     postcss = require('gulp-postcss'),
     syntax_scss = require('postcss-scss'), // postcss識別sass
     stylelint = require('stylelint'), //css審查
@@ -40,6 +40,13 @@ const gulp = require('gulp'),
     gutil = require('gulp-util'),
 
     devCompiler = webpack(webpackConfig),
+    processors = [
+        stylelint(),
+        reporter({
+            clearMessages: true,
+            throwError: true // 樣式檢驗不通過拋出錯誤，不能繼續編譯
+        })
+    ],
 
     // 環境變量，export NODE_ENV=production更改當前終端下環境變量，默認為開發環境
     NODE_ENV = (process.env.NODE_ENV === 'production') ? 'production' : 'develop',
@@ -86,20 +93,11 @@ gulp.task('imagemin', ['css-sprite'], () => gulp
     .pipe(gulp.dest(DIST_IMG_PATH))
 );
 
-gulp.task('stylelint', cb => {
-    let processors = [
-            stylelint(),
-            reporter({
-                clearMessages: true
-            })
-        ];
-    pump([
-            gulp.src(buildSass),
-            postcss(processors, {syntax: syntax_scss})
-        ],
-        cb
-    );
-});
+// style lint
+gulp.task('stylelint', cb => gulp
+    .src(buildSass)
+    .pipe(postcss(processors, {syntax: syntax_scss}))
+);
 
 // sass to css
 gulp.task('sass-to-css', ['stylelint'], () => gulp
@@ -167,7 +165,7 @@ gulp.task('jscompress', ['eslint'], cb => {
 // html added rev
 gulp.task('rev', () => gulp
     .src(html)
-    .pipe(assetRev({hashLen: 8, verConnecter: '?v='}))
+    .pipe(assetRev({hashLen: 8}))
     .pipe(gulp.dest(''))
 );
 

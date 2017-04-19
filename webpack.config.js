@@ -1,15 +1,15 @@
 /*
  * Gulp-Webpack
- * Version: 0.2.1
+ * Version: 0.2.2
+ * Author: HenriettaSu
  *
  * 自動化構建工具
- * 剛剛開始聯網安裝，測試中
  *
  * https://github.com/HenriettaSu/Gulp-Webpack
  *
  * License: MIT
  *
- * Released on: April 18, 2017
+ * Released on: April 19, 2017
  */
 
 const webpack = require('webpack'),
@@ -39,16 +39,17 @@ let webpackConfig = { // 基礎配置
 			// 模塊別名定義。模塊引入 require('moment')，可以提高打包速度
 			alias: {
 				moment: vendor + '/datepicker/moment.js',
-				jquery: vendor + '/jquery-1.12.4/js/jquery.min.js'
+				jquery: vendor + '/jquery-1.12.4/jquery.min.js'
 			}
 		},
 		/*
 		 * 聲明外部依賴，用cdn什麼的
 		 * 需要通過<script>引入文件，require('jquery')不會將jquery打包到構建文件裡
+		 * 如果有插件用到了jquery，直接外部引用，頁面上也可以繼續使用jquery
 		 */
 		externals: {
-			'jquery': 'window.jQuery',
-			'$': 'window.jQuery'
+			// 'jquery': 'window.jQuery',
+			// '$': 'window.jQuery'
 		},
 		module:{
 			loaders: [ // 文件加載器
@@ -90,12 +91,12 @@ let webpackConfig = { // 基礎配置
 				        	}
 				      	}
 				    ]
-				}
+				},
 				// 將對象暴露為全局變量，但是引用的文件會被打包到構建文件裡
-				// {
-				// 	test: path.resolve('jquery'),
-				// 	loader: 'expose?$!expose?jQuery'
-				// },
+				{
+					test: path.resolve('jquery'),
+					loader: 'expose?$!expose?jQuery'
+				},
 				/*
 				 * 模塊沒有module.exports的，相當於在params.js裡將對象params給module.exports = params
 				 * 但是這裡還沒有將params變成全局變量，除了另外使用expose-loader，還可以直接exports?window.params

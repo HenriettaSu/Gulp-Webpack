@@ -1,12 +1,18 @@
-# Gulp-Webpack ver 0.2.1
+# Gulp-Webpack ver 0.2.2
 
 自動化構建工具。
 
-#### 下面我都是亂寫的（
+針對多頁面應用使用的基本測試通過，單頁面應用版開發中。
 
-剛剛開始聯網安裝，測試中。
+基本編譯沒有問題了，js調試中。
 
 ## 最近更新
+
+ver 0.2.2
+
+1. 完成stylelint規則；
+2. 測試通過 `gulp` 和 `gulp wp`；
+3. 修復了添加版本號格式錯誤bug；
 
 ver 0.2.1
 
@@ -18,13 +24,6 @@ ver 0.2.1
 6. 壓縮css時移除special comments；
 7. 刪掉一些測試代碼；
 8. 修復更改環境變量的指令多了空格報錯的bug；
-
-ver 0.2.0
-
-1. 測試通過 `sass-to-css`， `minify-css`， `eslint`， `jscompress`；
-2. 增加eslint校驗規則；
-3. 增加了 `gulp wp` 命令做webpack版，默認 `gulp` 命令不使用webpack編譯；
-4. 修復了一些脫字誤字引起的bug；
 
 ## 功能
 
@@ -64,10 +63,10 @@ ver 0.2.0
 ├── vendor                     # 插件和庫
 │   └── ...
 └── gulpfile.js
-└── webpack.config.js
+└── webpack.config.js		   # webpack配置
+└── .eslintrc				   # eslint規則
+└── .stylelintrc			   # stylelint規則
 ```
-
-我是這麼想的，但現在的腳本能不能按照我所想的正確輸出我還不知道。
 
 ## 使用
 
@@ -84,6 +83,20 @@ $ git clone git@github.com:HenriettaSu/Gulp-Webpack.git
 ```
 $ cd Gulp-Webpack
 $ node install --save-dev
+```
+
+然後到 `node_modules/gulp-asset-rev/index.js` 裡找到下面代碼：
+
+```
+var verStr = (options.verConnecter || "-") + md5;
+src = src.replace(verStr, '').replace(/(\.[^\.]+)$/, verStr + "$1");
+```
+
+替換成：
+
+```
+var verStr = (options.verConnecter || "") + md5;
+src = src + '?v=' + verStr;
 ```
 
 ### 環境變量
@@ -117,6 +130,26 @@ $ gulp imagemin
 ```
 $ gulp stylelint
 ```
+
+**重要提示：**校驗不通過將拋出錯誤，不能編譯文件。
+
+校驗這種事還是有點主觀的，以下幾種規則都是為了增強可讀性的，刪掉或修改並不影響：
+
+- `case` 類：大小寫
+- `empty-lines` 類：空行
+- `newline` 類：換行
+- `space` 類：空格
+- `whitespace` 類：空白
+
+但是下列幾種規則**建議保留**：
+
+- `color-no-invalid-hex`：避免無效的色值；
+- `no-duplicate` 類：避免重複；
+- `no-extra-semicolons`：避免多餘分號；
+- `no-empty` 類：避免空塊等；
+- `no-unknown` 類：避免脫字誤字；
+- `no-vendor-prefix` 類：為了避免漏了前綴或使用了前綴過期，編譯sass的時會自動執行 `autoPrefixer()` 添加前綴；
+- `shorthand-property-no-redundant-values`：避免可簡寫屬性出現冗余值；
 
 #### sass編譯
 
@@ -210,15 +243,7 @@ $ gulp wp
 
 ## TODO
 
-1. 要不要用 `WebpackBrowserPlugin` 替代 `browser-sync`；
-
-2. 關於發佈分支：
-
-   A. 除了dist分支，再分一個發佈用的輸出分支，更改環境變量來控制編譯配置；
-
-   B. 新建一個task，通過gulp來對開發環境輸出的dist分支裡的文件進行壓縮編譯；
-
-3. 單頁面應用；
+1. 單頁面應用；
 
 ## 聯繫與討論
 
