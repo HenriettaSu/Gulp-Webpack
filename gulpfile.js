@@ -1,15 +1,16 @@
 /*
  * Gulp-Webpack
- * Version: 0.2.2
+ * Version: 1.0.0
  * Author: HenriettaSu
  *
  * 自動化構建工具
+ * 包含單頁面應用和多頁面應用策略
  *
  * https://github.com/HenriettaSu/Gulp-Webpack
  *
  * License: MIT
  *
- * Released on: April 19, 2017
+ * Released on: April 20, 2017
  */
 
 'use strict';

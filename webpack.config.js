@@ -1,15 +1,16 @@
 /*
  * Gulp-Webpack
- * Version: 0.2.2
+ * Version: 1.0.0
  * Author: HenriettaSu
  *
  * 自動化構建工具
+ * 包含單頁面應用和多頁面應用策略
  *
  * https://github.com/HenriettaSu/Gulp-Webpack
  *
  * License: MIT
  *
- * Released on: April 19, 2017
+ * Released on: April 20, 2017
  */
 
 const webpack = require('webpack'),
@@ -27,19 +28,21 @@ const NODE_ENV = (process.env.NODE_ENV === 'production') ? 'production' : 'devel
 
 let webpackConfig = { // 基礎配置
 		cache: true,
-		devtool: (NODE_ENV !== 'production') ? 'cheap-module-eval-source-map' : false,
+		devtool: (NODE_ENV !== 'production') ? 'cheap-module-source-map' : false,
 		entry: {}, // 入口
 		output: {
-			path: path.join(__dirname, 'dist/module'),
-			publicPath: 'dist/module',
+			path: path.join(__dirname, 'dist/module'), // 輸出文件目錄
+			publicPath: 'dist/module/', // 文件裡的src路徑
 			filename: '[name].js',
-			chunkFilename: '[name].[chunkhash:8].js' // 單頁面應用。用require.ensure()才會生成chunkFile
+			chunkFilename: '[name].js' // 單頁面應用。用require.ensure()才會生成chunkFile
 		},
 		resolve: {
 			// 模塊別名定義。模塊引入 require('moment')，可以提高打包速度
 			alias: {
 				moment: vendor + '/datepicker/moment.js',
-				jquery: vendor + '/jquery-1.12.4/jquery.min.js'
+				jquery: vendor + '/jquery/jquery-1.12.4.js',
+				// 按需加載require.ensure()的文件要定名字否則real難定位
+				ensure: build + '/js/ensure.js'
 			}
 		},
 		/*
@@ -51,8 +54,8 @@ let webpackConfig = { // 基礎配置
 			// 'jquery': 'window.jQuery',
 			// '$': 'window.jQuery'
 		},
-		module:{
-			loaders: [ // 文件加載器
+		module: {
+			rules: [ // 文件加載器
 				{
 					test: /\.css$/,
 					loader: ExtractTextPlugin.extract(
@@ -93,10 +96,20 @@ let webpackConfig = { // 基礎配置
 				    ]
 				},
 				// 將對象暴露為全局變量，但是引用的文件會被打包到構建文件裡
+				// 唔，這個require.resolve（）是node.js調用的，不能用前面alias設置的別名
 				{
-					test: path.resolve('jquery'),
-					loader: 'expose?$!expose?jQuery'
-				},
+					test: require.resolve(vendor + '/jquery/jquery-1.12.4.js'),
+					use: [
+						{
+			                loader: 'expose-loader',
+			                options: 'jQuery'
+			            },
+						{
+			                loader: 'expose-loader',
+			                options: '$'
+		            	}
+					]
+				}
 				/*
 				 * 模塊沒有module.exports的，相當於在params.js裡將對象params給module.exports = params
 				 * 但是這裡還沒有將params變成全局變量，除了另外使用expose-loader，還可以直接exports?window.params
@@ -109,7 +122,7 @@ let webpackConfig = { // 基礎配置
 			noParse: /node_modules\/(jquery|moment|chart\.js)/ // 使某些沒有依賴的文件脫離webpack解釋
 		},
     	plugins: [ // 插件越多打包越慢，開發環境下可以適當屏蔽某些
-			new webpack.ProvidePlugin({ // 全局變量。當模塊使用到變量時，自動加載，無須require()
+			new webpack.ProvidePlugin({ // 當模塊使用到變量時，自動加載，無須require()
 				'$': 'jquery',
 				jQuery: 'jquery'
 			}),
@@ -118,12 +131,12 @@ let webpackConfig = { // 基礎配置
 			new UglifyJsPlugin({ // css也在這裡壓縮
 				comments: false,
 				compress: {
-					warnings: false,
 					drop_console: (NODE_ENV === 'production')
 				},
 				mangle: { // 混淆
 					except: ['$', 'exports', 'require', "jQuery"]
-				}
+				},
+				sourceMap: (NODE_ENV !== 'production')
 			})
 		]
 	},

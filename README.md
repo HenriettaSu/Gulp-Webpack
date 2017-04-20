@@ -1,29 +1,21 @@
-# Gulp-Webpack ver 0.2.2
+# Gulp-Webpack ver 1.0.0
 
 自動化構建工具。
 
-針對多頁面應用使用的基本測試通過，單頁面應用版開發中。
-
-基本編譯沒有問題了，js調試中。
+包含單頁面應用和多頁面應用策略。
 
 ## 最近更新
+
+ver 1.0.0
+
+1. 單頁面應用版搞定了；
+2. 修復了 `expose-loader` 姿勢過時引起的全局變量暴露失敗bug；
 
 ver 0.2.2
 
 1. 完成stylelint規則；
 2. 測試通過 `gulp` 和 `gulp wp`；
 3. 修復了添加版本號格式錯誤bug；
-
-ver 0.2.1
-
-1. 測試通過 `css-sprite`， `imagemin`， `webpack` ，`rev`， `stylelint`；
-2. 增加eslint校驗規則；
-3. 增加.stylelintrc文件（未完成）；
-4. webpack2移除了 `DedupePlugin`，so我把這個刪掉了；
-5. 增加 `gulp minify-module-css` 來壓縮module裡被提取出來的css文件；
-6. 壓縮css時移除special comments；
-7. 刪掉一些測試代碼；
-8. 修復更改環境變量的指令多了空格報錯的bug；
 
 ## 功能
 
@@ -243,7 +235,8 @@ $ gulp wp
 
 ## TODO
 
-1. 單頁面應用；
+1. 結合angular看看；
+2. 插件版本管理；
 
 ## 聯繫與討論
 

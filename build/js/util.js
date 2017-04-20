@@ -4,10 +4,11 @@ util = jQuery.prototype = {
     },
     alertMsg: function () {
         alert(300);
+    },
+    ensure: function () {
+        require.ensure([], function (require) {
+            var foo = require('ensure');
+            foo.ensureMsg();
+        });
     }
-// ensure: function () {
-//     require.ensure(['ensure.js'], function () {
-//         console.log(ensureMsg());
-//     });
-// }
 };
