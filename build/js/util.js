@@ -6,9 +6,10 @@ util = jQuery.prototype = {
         alert(300);
     },
     ensure: function () {
-        require.ensure([], function (require) {
+        require.ensure([], function () {
             var foo = require('ensure');
-            foo.ensureMsg();
+            // foo.ensureMsg();
+            // console.log(300);
         });
     }
 };

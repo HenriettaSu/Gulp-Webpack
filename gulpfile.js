@@ -18,6 +18,7 @@ const gulp = require('gulp'),
     gulpif = require('gulp-if'),
     changed = require('gulp-changed'),
     rename = require('gulp-rename'),
+    plumber = require('gulp-plumber'), // 處理拋出的錯誤
     sass = require('gulp-sass'),
     autoPrefixer = require('gulp-autoprefixer'), // css3前綴
     spritesmith = require('gulp.spritesmith'), // css sprite
@@ -95,29 +96,32 @@ gulp.task('imagemin', ['css-sprite'], () => gulp
 );
 
 // style lint
-gulp.task('stylelint', cb => gulp
-    .src(buildSass)
-    .pipe(postcss(processors, {syntax: syntax_scss}))
-);
+gulp.task('stylelint', cb => {
+    gulp.src(buildSass)
+        .pipe(plumber())
+        .pipe(postcss(processors, {syntax: syntax_scss}));
+    cb();
+});
 
 // sass to css
-gulp.task('sass-to-css', ['stylelint'], () => gulp
-    .src(buildSass)
-    .pipe(changed(buildSass))
-    .pipe(sourceMaps.init())
-    .pipe(sass().on('error', e => {
-        console.error(e.message);
-    }))
-    .pipe(autoPrefixer({
-        // mobile
-        // browsers: ['> 1%', 'last 2 versions'],
-        // pc
-        browsers: ['> 1%', 'last 2 versions', 'ie 6-11'],
-        cascade: false
-    }))
-    .pipe(sourceMaps.write('../../dist/css/maps'))
-    .pipe(gulp.dest(BUILD_CSS_PATH))
-);
+gulp.task('sass-to-css', ['stylelint'], cb => {
+    gulp.src(buildSass)
+        .pipe(changed(buildSass))
+        .pipe(sourceMaps.init())
+        .pipe(sass().on('error', e => {
+            console.error(e.message);
+        }))
+        .pipe(autoPrefixer({
+            // mobile
+            // browsers: ['> 1%', 'last 2 versions'],
+            // pc
+            browsers: ['> 1%', 'last 2 versions', 'ie 6-11'],
+            cascade: false
+        }))
+        // .pipe(sourceMaps.write('../../dist/css/maps'))
+        .pipe(gulp.dest(BUILD_CSS_PATH));
+    cb();
+});
 
 // minify css
 gulp.task('minify-css', () => gulp
@@ -140,14 +144,16 @@ gulp.task('minify-module-css', () => gulp
 );
 
 // js lint
-gulp.task('eslint', () => gulp
-    .src(buildJs)
-    .pipe(changed(buildJs))
-    //.pipe(stripDebug())
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError())
-);
+gulp.task('eslint', cb => {
+    gulp.src(buildJs)
+        .pipe(plumber())
+        .pipe(changed(buildJs))
+        //.pipe(stripDebug())
+        .pipe(eslint())
+        .pipe(eslint.format())
+        .pipe(eslint.failAfterError())
+    cb();
+});
 
 // minify js
 gulp.task('jscompress', ['eslint'], cb => {
@@ -171,16 +177,19 @@ gulp.task('rev', () => gulp
 );
 
 // webpack
-gulp.task('webpack', ['eslint'], cb => {
+gulp.task('webpack', ['eslint', 'sass-to-css'], cb => {
     devCompiler.run((err, stats) => {
         if (err) {
-            throw new gutil.PluginError('webpack', err)
-        };
+            throw new gutil.PluginError('webpack', err);
+        }
         gutil.log('[webpack]', stats.toString({
-            colors: true
+            colors: true,
+            assets: !stats.hasErrors(),
+            children: !stats.hasErrors(),
+            chunks: !stats.hasErrors()
         }));
-        cb();
     });
+    cb();
 });
 
 // watch icon
@@ -207,29 +216,15 @@ gulp.task('watch-css', done => {
         .on('end', done);
 });
 
-// watch css with webpack
-gulp.task('watch-css-wp', done => {
-    gulp.watch(buildCss, ['webpack'])
-        .on('end', done);
-});
-
 // watch js
 gulp.task('watch-js', done => {
     gulp.watch(buildJs, ['jscompress'])
         .on('end', done);
 });
 
-// watch js with webpack
-gulp.task('watch-js-wp', done => {
-    gulp.watch(buildJs, ['webpack'])
-        .on('end', done);
-    gulp.watch(buildModule, ['webpack'])
-        .on('end', done);
-});
-
-// watch css in module
-gulp.task('watch-module-css', done => {
-    gulp.watch(moduleCss, ['minify-module-css'])
+// watch module for webpack
+gulp.task('watch-module', done => {
+    gulp.watch([buildSass, buildJs, buildModule], ['webpack', 'minify-module-css'])
         .on('end', done);
 });
 
@@ -237,7 +232,7 @@ gulp.task('watch-module-css', done => {
 gulp.task('watch', ['watch-icon', 'watch-img', 'watch-sass', 'watch-css', 'watch-js']);
 
 // webpack版
-gulp.task('watch-wp', ['watch-icon', 'watch-img', 'watch-sass', 'watch-css-wp', 'watch-module-css',  'watch-js-wp']);
+gulp.task('watch-wp', ['watch-icon', 'watch-img', 'watch-module']);
 
 // browser-sync
 gulp.task('browser-sync', () => {
