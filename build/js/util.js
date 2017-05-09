@@ -8,8 +8,7 @@ util = jQuery.prototype = {
     ensure: function () {
         require.ensure([], function () {
             var foo = require('ensure');
-            // foo.ensureMsg();
-            // console.log(300);
+            foo.ensureMsg();
         });
     }
 };

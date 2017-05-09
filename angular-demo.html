@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="dist/module/angular-demo.css" rel="stylesheet">
+  </head>
+  </head>
+  <body>
+    <button type="button" id="btn">Klick mich!</button>
+    <my-app></my-app>
+    <my-input></my-input>
+    <my-http></my-http>
+
+    <script src="dist/module/common-angular.js"></script>
+    <script src="dist/module/angular-demo.js"></script>
+    <script>
+      var isEnsure = false;
+      function createEnsure () {
+          if (!isEnsure) {
+              var myEnsure = document.createElement('my-ensure');
+              document.getElementsByTagName('body')[0].appendChild(myEnsure);
+              util.ensureAngular();
+              isEnsure = true;
+          } else {
+              console.log('ensure have been loaded');
+          }
+      }
+      document.getElementById('btn').addEventListener('click', createEnsure);
+    </script>
+  </body>
+</html>

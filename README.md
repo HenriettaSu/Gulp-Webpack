@@ -1,21 +1,29 @@
-# Gulp-Webpack ver 1.0.1
+# Gulp-Webpack ver 1.1.0
 
 自動化構建工具。
 
 包含單頁面應用和多頁面應用策略。
 
+整合Angular4使用。
+
+學習試手得差不多了，基本功能已經完備，此處備份思路，不會再更新本此工具。
+
 ## 最近更新
+
+ver 1.1.0
+
+1. 加上 Angular4；
+2. mock數據，虛擬服務器代理；
+3. chrom無法顯示 `cheap-module-source-map` 的sourcemap，換了一個devtool，現在sourcemap指向原文件；
+4. 增加發佈環境下的webpack日誌參數；
+5. 開發環境下webpack不使用 `UglifyJsPlugin()`；
+6. 增加新命令；
 
 ver 1.0.1
 
 1. 部分任務做成異步任務；
 2. `watch-wp` 監視流程修改；
 3. 拋出錯誤不再終止任務；
-
-ver 1.0.0
-
-1. 單頁面應用版搞定了；
-2. 修復了 `expose-loader` 姿勢過時引起的全局變量暴露失敗bug；
 
 ## 功能
 
@@ -47,6 +55,7 @@ ver 1.0.0
 │       └── common-page
 │       └── ...
 │   └── sass                   # sass文件目錄
+│   └── ts                     # Angular的ts文件目錄
 ├── dist                       # 輸出目錄
 │   └── css					   # 不使用webpack的css輸出目錄
 │   └── js					   # 不使用webpack的js輸出目錄
@@ -56,6 +65,7 @@ ver 1.0.0
 │   └── ...
 └── gulpfile.js
 └── webpack.config.js		   # webpack配置
+└── tsconfig.json		       # TypeScript配置
 └── .eslintrc				   # eslint規則
 └── .stylelintrc			   # stylelint規則
 ```
@@ -74,7 +84,8 @@ $ git clone git@github.com:HenriettaSu/Gulp-Webpack.git
 
 ```
 $ cd Gulp-Webpack
-$ node install --save-dev
+$ npm install
+$ npm install gulp -global
 ```
 
 然後到 `node_modules/gulp-asset-rev/index.js` 裡找到下面代碼：
@@ -100,6 +111,14 @@ src = src + '?v=' + verStr;
 ```
 $ export NODE_ENV=production
 ```
+
+### npm命令
+
+`npm run build`：編譯發佈環境文件
+
+`npm run webpack`：編譯開發環境文件，所編譯文件均未壓縮
+
+`npm run dev`：進入開發環境，並開始監視文件變化
 
 ### gulp命令
 
@@ -223,7 +242,7 @@ $ gulp wp
 
 考慮到某些情況下，頁面類型不同導致加載文件差異較大，module先以文件夾對頁面進行簡單分類如：列表頁、詳情頁、等，每個頁面又需要一個文件夾對應，加載的文件以 `require()` 的形式寫在 `index.js` 文件內。
 
-目前設想的是，react、jquery之類的通過 `<script>` 單獨引入，其他第三方插件打包一起（TODO：配置拓展要不要打包到一起？）並分公共文件和獨立文件，共三個（若配置拓展獨立的話，四個）。
+目前設想的是，react、jquery之類的通過 `<script>` 單獨引入，其他第三方插件打包一起（TODO：配置拓展要不要打包到一起？）並分公共文件和獨立文件。
 
 詳細參看 `webpack.config.js` 文件，有簡單註釋，暫時覺得沒有什麼需要特別拿出來說的。
 
@@ -232,11 +251,6 @@ $ gulp wp
 - `build` 開發分支
 - `dist` 包含全部編譯後代碼的分支
 - `vendor` 庫、第三方插件分支
-
-## TODO
-
-1. 結合angular看看；
-2. 插件版本管理；
 
 ## 聯繫與討論
 

@@ -1,6 +1,6 @@
 /*
  * Gulp-Webpack
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: HenriettaSu
  *
  * 自動化構建工具
@@ -10,7 +10,7 @@
  *
  * License: MIT
  *
- * Released on: April 20, 2017
+ * Released on: May 09, 2017
  */
 
 'use strict';
@@ -32,6 +32,7 @@ const gulp = require('gulp'),
     concat = require('gulp-concat'), // 文件合併
     assetRev = require('gulp-asset-rev'),
     bs = require('browser-sync').create(),
+    proxy = require('http-proxy-middleware'), // 接口代理
     stripDebug = require('gulp-strip-debug'), // 清除console, alert, debugger
     postcss = require('gulp-postcss'),
     syntax_scss = require('postcss-scss'), // postcss識別sass
@@ -41,6 +42,9 @@ const gulp = require('gulp'),
     webpackConfig = require('./webpack.config'),
     gutil = require('gulp-util'),
 
+    // 環境變量，export NODE_ENV=production更改當前終端下環境變量，默認為開發環境
+    NODE_ENV = (process.env.NODE_ENV === 'production') ? 'production' : 'develop',
+
     devCompiler = webpack(webpackConfig),
     processors = [
         stylelint(),
@@ -49,9 +53,10 @@ const gulp = require('gulp'),
             throwError: true // 樣式檢驗不通過拋出錯誤，不能繼續編譯
         })
     ],
-
-    // 環境變量，export NODE_ENV=production更改當前終端下環境變量，默認為開發環境
-    NODE_ENV = (process.env.NODE_ENV === 'production') ? 'production' : 'develop',
+    jsonProxy = proxy('/api', {
+        ws: false,
+        target: 'http://127.0.0.1:8033' // 代理到服務端
+    }),
 
     // file path
     buildImg = 'build/images/*',
@@ -179,15 +184,16 @@ gulp.task('rev', () => gulp
 // webpack
 gulp.task('webpack', ['eslint', 'sass-to-css'], cb => {
     devCompiler.run((err, stats) => {
+        const webpackLogConfig = {
+            colors: true,
+            children: (NODE_ENV === 'production') ? false : !stats.hasErrors(),
+            chunks: (NODE_ENV === 'production') ? false : !stats.hasErrors(),
+            assets: !stats.hasErrors()
+        };
         if (err) {
             throw new gutil.PluginError('webpack', err);
         }
-        gutil.log('[webpack]', stats.toString({
-            colors: true,
-            assets: !stats.hasErrors(),
-            children: !stats.hasErrors(),
-            chunks: !stats.hasErrors()
-        }));
+        gutil.log('[webpack]', stats.toString(webpackLogConfig));
     });
     cb();
 });
@@ -238,9 +244,10 @@ gulp.task('watch-wp', ['watch-icon', 'watch-img', 'watch-module']);
 gulp.task('browser-sync', () => {
     bs.init({
         server: {
-            baseDir: './'
+            baseDir: './',
+            middleware: [jsonProxy]
         },
-        files: ['./dist/**/*.*', './']
+        files: ['./dist/**/*.*', './*.html']
         // tunnel: "henriettaSu",
         // online: true
         /*

@@ -1,6 +1,6 @@
 /*
  * Gulp-Webpack
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: HenriettaSu
  *
  * 自動化構建工具
@@ -10,7 +10,7 @@
  *
  * License: MIT
  *
- * Released on: April 20, 2017
+ * Released on: May 09, 2017
  */
 
 const webpack = require('webpack'),
@@ -19,16 +19,47 @@ const webpack = require('webpack'),
 	ExtractTextPlugin = require('extract-text-webpack-plugin'),
 	CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin,
 	UglifyJsPlugin = webpack.optimize.UglifyJsPlugin,
-	DedupePlugin = webpack.optimize.DedupePlugin;
+	DedupePlugin = webpack.optimize.DedupePlugin,
 
 // 環境變量，export NODE_ENV=production更改當前終端下環境變量，默認為開發環境
-const NODE_ENV = (process.env.NODE_ENV === 'production') ? 'production' : 'develop',
+	NODE_ENV = (process.env.NODE_ENV === 'production') ? 'production' : 'develop',
 	build = path.resolve(process.cwd(), 'build'),
-	vendor = path.resolve(process.cwd(), 'vendor');
+	vendor = path.resolve(process.cwd(), 'vendor'),
+	node_modules = path.resolve(process.cwd(), 'node_modules'),
+
+	createEntriesCommons = (globPath, type) => {
+	    let files = glob.sync(globPath),
+			entries = {},
+			commons = {};
+		switch (type) {
+			case 'entries':
+				files.forEach(filepath => {
+					let split = filepath.split('/'),
+						name = split[split.length - 2];
+					 entries[name] = './' + filepath;
+				 });
+			     return entries;
+			case 'commons':
+			    files.forEach(filepath => {
+			        let split = filepath.split('/'),
+						name = split[split.length - 3],
+						chunks = split[split.length - 2];
+					if (!commons[name]) {
+				  		commons[name] = new Array;
+					}
+					commons[name].push(chunks);
+			     });
+			     return commons;
+			default:
+				console.error('Cannot find the path or the type is undefined.');
+		}
+	},
+	entries = createEntriesCommons('build/modules/**/**/index.js', 'entries'),
+	commons = createEntriesCommons('build/modules/**/**/index.js', 'commons');
 
 let webpackConfig = { // 基礎配置
 		cache: true,
-		devtool: (NODE_ENV !== 'production') ? 'cheap-module-source-map' : false,
+		devtool: (NODE_ENV !== 'production') ? 'cheap-module-eval-source-map' : false,
 		entry: {}, // 入口
 		output: {
 			path: path.join(__dirname, 'dist/module'), // 輸出文件目錄
@@ -41,9 +72,14 @@ let webpackConfig = { // 基礎配置
 			alias: {
 				moment: vendor + '/datepicker/moment.js',
 				jquery: vendor + '/jquery/jquery-1.12.4.js',
+				angular: node_modules + '/angular',
 				// 按需加載require.ensure()的文件要定名字否則real難定位
 				ensure: build + '/js/ensure.js'
-			}
+			},
+			extensions: [
+	            '.js',
+	            '.ts'
+	        ]
 		},
 		/*
 		 * 聲明外部依賴，用cdn什麼的
@@ -56,6 +92,11 @@ let webpackConfig = { // 基礎配置
 		},
 		module: {
 			rules: [ // 文件加載器
+				// angular使用的typescript語言
+				{
+				    test: /\.ts$/,
+				    loader: 'awesome-typescript-loader'
+				},
 				{
 					test: /\.css$/,
 					loader: ExtractTextPlugin.extract(
@@ -115,8 +156,8 @@ let webpackConfig = { // 基礎配置
 				 * 但是這裡還沒有將params變成全局變量，除了另外使用expose-loader，還可以直接exports?window.params
 				 */
 				// {
-				// 	test: path.resolve(build + '/js/params.js'),
-				// 	loader: 'exports?params'
+				// 	test: require.resolve(build + '/js/params.js'),
+				// 	use: 'exports-loader?params'
 				// }
 			],
 			noParse: /node_modules\/(jquery|moment|chart\.js)/ // 使某些沒有依賴的文件脫離webpack解釋
@@ -127,53 +168,13 @@ let webpackConfig = { // 基礎配置
 				jQuery: 'jquery'
 			}),
 			new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/), // 忽略moment裡對locale的require()
-			new ExtractTextPlugin('[name].css'),
-			new UglifyJsPlugin({ // css也在這裡壓縮
-				comments: false,
-				compress: {
-					drop_console: (NODE_ENV === 'production')
-				},
-				mangle: { // 混淆
-					except: ['$', 'exports', 'require', "jQuery"]
-				},
-				sourceMap: (NODE_ENV !== 'production')
-			})
+			new ExtractTextPlugin('[name].css')
 		]
-	},
-	createEntriesCommons = (globPath, type) => {
-	    let files = glob.sync(globPath),
-			entries = {},
-			commons = {};
-		switch (type) {
-			case 'entries':
-				files.forEach(filepath => {
-					let split = filepath.split('/'),
-						name = split[split.length - 2];
-					 entries[name] = './' + filepath;
-				 });
-			     return entries;
-			case 'commons':
-			    files.forEach(filepath => {
-			        let split = filepath.split('/'),
-						name = split[split.length - 3],
-						chunks = split[split.length - 2];
-					if (!commons[name]) {
-				  		commons[name] = new Array;
-					}
-					commons[name].push(chunks);
-			     });
-			     return commons;
-			default:
-				console.error('Cannot find the path or the type is undefined.');
-		}
-	},
-	entries = createEntriesCommons('build/modules/**/**/index.js', 'entries'),
-	commons = createEntriesCommons('build/modules/**/**/index.js', 'commons');
+	};
 
 Object.entries(entries).forEach(arry => { // 生成入口
 	let entryKey = arry[0],
 		entryVal = arry[1];
-    // webpackConfig.entry[name] = entries[name];
     webpackConfig.entry[entryKey] = entryVal;
 });
 
@@ -184,5 +185,18 @@ Object.entries(commons).forEach(arry => { // 公共文件提取
 	});
 	webpackConfig.plugins.push(plugin);
 });
+
+if (NODE_ENV === 'production') {
+	webpackConfig.plugins.push(new UglifyJsPlugin({
+		comments: false,
+		compress: {
+			drop_console: true
+		},
+		mangle: { // 混淆
+			except: ['$', 'exports', 'require', "jQuery"]
+		},
+		sourceMap: false
+	}));
+}
 
 module.exports = webpackConfig;
